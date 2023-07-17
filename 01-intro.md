@@ -2,6 +2,9 @@
 title: 'Making an immutable image-based operating system out of Garden Linux'
 ---
 
+> This post is part of a blog post series on my Garden Linux fellowship. \
+> The next entry in the series is [todo](todo).
+
 I have been working as a developer on the [SAP Cloud SDK team](https://sap.github.io/cloud-sdk/) for almost six years now, during which I have learned a great deal from various projects involving diverse technologies.
 
 One non-Cloud SDK thing that really caught my interest in the last year are Linux-related topics.
