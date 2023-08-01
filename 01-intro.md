@@ -48,13 +48,13 @@ In a newly installed system you will only have one commit, and you will get new 
 You can view existing commits in the cli, which does look quite similar to git.
 
 <!-- ostree-log.png  -->
-![](./ostree-log.png "Viewing OSTree Commits")
+![](./01-a-ostree-log.png "Viewing OSTree Commits")
 
 Each new *commit* creates a new *deployment* on the local computer.
 Deployments can be selected at boot time like in this example:
 
 <!-- ostree-boot-deployments.png  -->
-![](./ostree-boot-deployments.png "Deployment selection at Boot")
+![](./01-b-ostree-boot-deployments.png "Deployment selection at Boot")
 
 On boot, the currently selected deployment is used for the root filesystem.
 Since most files won't change between deployments, the file exists only once on the local hard drive.
@@ -64,14 +64,14 @@ Both deployments contain the same version of `bash`, so the binary file exists o
 We're booted into the newer deployment `B`, the older `A` is still available as a fallback.
 
 <!-- ostree-deployment-repo-1.png  -->
-![](./ostree-deployment-repo-1.png "Schematic view of two deployments, both with the same version of bash, Deployment B is booted")
+![](./01-c-ostree-deployment-repo-1.png "Schematic view of two deployments, both with the same version of bash, Deployment B is booted")
 
 Now a new deployment `C` becomes available which replaces the older `A` deployment.
 `C` contains a newer version of `bash`.
 Since the `B` deployment is still available on the machine, we now have the `bash` binary in two versions on our machine.
 
 <!-- ostree-deployment-repo-2.png -->
-![](./ostree-deployment-repo-2.png "Schematic view of two deployments, with different version of bash, Deployment C is booted")
+![](./01-d-ostree-deployment-repo-2.png "Schematic view of two deployments, with different version of bash, Deployment C is booted")
 
 Bash version `5.2.13` will disappear from our system once a new deployment `D` exists which will replace deployment `B`.
 
