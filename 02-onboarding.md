@@ -37,17 +37,19 @@ There are a few scripts on GitHub for building OSTree-based Debian systems, but 
 
 But even if this was successful, it would not have fully solved my problem as Garden Linux does have a few differences to a 'standard' Debian install.
 
+The key differences between Garden Linux and a 'standard' Debian install are:
+
+- Garden Linux uses [systemd-boot](https://www.freedesktop.org/software/systemd/man/systemd-boot.html) instead of GRUB as the bootloader
+- Garden Linux uses [dracut](https://github.com/dracutdevs/dracut/wiki) instead of [initramfs-tools](https://wiki.debian.org/initramfs-tools) for the initramfs
+- Garden Linux has a very minimal set of packages available in it's repositories, focussing on it's purpose
+
 So I decided to start from scratch.
 
 ## Building a Garden Linux OSTree system
 
 The goal was to get a Garden Linux system booting using OSTree, somehow.
 
-The first bummer was that Garden Linux does not include the GRUB bootloader, which is the most common bootloader for Linux systems.
-
-Garden Linux instead uses [systemd-boot](https://www.freedesktop.org/software/systemd/man/systemd-boot.html) which does have a much smaller code base and is easier to understand, but does not provide all the features of GRUB.
-
-OSTree does need integration with the bootloader, but [systemd-boot is not yet supported](https://github.com/ostreedev/ostree/issues/1719).
+The first bummer was that OSTree does need integration with the bootloader, but [systemd-boot is not yet supported](https://github.com/ostreedev/ostree/issues/1719).
 
 So I decided to use GRUB for now, and switch to systemd-boot later.
 After about two weeks, this turned out as an dead end.
