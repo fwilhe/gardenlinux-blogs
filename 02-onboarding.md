@@ -46,9 +46,10 @@ The key differences between Garden Linux and a 'standard' Debian install are:
 
 As someone who was not involved in making those decisions, I think they show a lot of pragmatism.
 Debian is a rock solid base operating system that is being developed by an open source community and supported by a non profit organization.
-Garden Linux takes this foundation and swaps out parts that make sense for it's purpose, all open source, available for everyone to benefit from.
+Garden Linux takes this foundation and swaps out parts that make sense for it's purpose.
+And it is available to the public, as open source software, allowing anyone to use it for their own purposes.
 
-Because I could not find a OSTree builder that would work with a Debian distribution, I decided to start from scratch.
+Because I could not find a OSTree builder that would work with Garden Linux, I decided to start from scratch.
 
 ## Building a Garden Linux OSTree system
 
@@ -132,7 +133,8 @@ Over time, I've fixed errors in my build script as I discovered them.
 Since we learn from errors, let's have a look at some of them:
 
 - I did screw up the [links in the root fs](https://ostreedev.github.io/ostree/adapting-existing/#system-layout)
-  - Somehow creating a cyclic link from `/sysroot/ostree` pointing to `/sysroot/ostree`
+  - Somehow I managed to create a cyclic link from `/sysroot/ostree` pointing to `/sysroot/ostree`
+  - I'm still not sure if I got the relation between the `sysroot`, `repo` and `ostree` directories right, this lead to multiple failed attempts to build and boot the system
 - I had wrong parameters in the ostree deploy command leading to invalid BLS entries
 
 I have to admit that creating a bootable OSTree system is harder than I anticipated, and both the documentation and the existing build scripts were hard to understand for me at times.
