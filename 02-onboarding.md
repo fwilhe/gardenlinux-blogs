@@ -42,8 +42,13 @@ The key differences between Garden Linux and a 'standard' Debian install are:
 - Garden Linux uses [systemd-boot](https://www.freedesktop.org/software/systemd/man/systemd-boot.html) instead of GRUB as the bootloader
 - Garden Linux uses [dracut](https://github.com/dracutdevs/dracut/wiki) instead of [initramfs-tools](https://wiki.debian.org/initramfs-tools) for the initramfs
 - Garden Linux has a very minimal set of packages available in it's repositories, focussing on it's purpose
+- Garden Linux has its own [containerized builder](https://github.com/gardenlinux/builder), allowing to build customized Garden Linux systems easily
 
-So I decided to start from scratch.
+As someone who was not involved in making those decisions, I think they show a lot of pragmatism.
+Debian is a rock solid base operating system that is being developed by an open source community and supported by a non profit organization.
+Garden Linux takes this foundation and swaps out parts that make sense for it's purpose, all open source, available for everyone to benefit from.
+
+Because I could not find a OSTree builder that would work with a Debian distribution, I decided to start from scratch.
 
 ## Building a Garden Linux OSTree system
 
@@ -63,20 +68,10 @@ This does not look too bad.
 
 ![](./02-b-ostree-bls-entry.png "Garden Linux OSTree BLS entry")
 
-But it does not boot.
+But it does not boot successfully.
+I've had various issues while trying to boot this deployment, and I'll get to them later.
 
-![](./02-c-ostree-boot-error.png "Garden Linux trying to boot with OSTree")
-
-With some manual hacks, I was able to somewhat boot an OSTree based Garden Linux system for the first time.
-
-![](./02-d-gl-ostree-summary.png "OSTree based Garden Linux booted")
-
-Yay! Big Success, I guess.
-
-But.. it was not really a functional system.
-
-Journalctl showed that the system had multiple issues while booting.
-Something is still not right with how the system boots.
+First, we need to investigate a question that became ever more apparent as I've continued my journey.
 
 ## Well, how does Linux boot anyway?
 
@@ -128,4 +123,23 @@ This is what gives us the properties of the OSTree system, where `/usr` is read-
 
 ## Current status and next steps
 
-todo: write section on how I plan to proceed
+During the last three weeks, I've made a lot of progress.
+
+I've spent quite some time debugging, looking into the source code of OSTree, comparing my Garden Linux system to the CentOS system, analyzing the build logs of the CentOS vm, even injecting my own dracut module into the initrd for debugging purposes.
+
+Over time, I've fixed errors in my build script as I discovered them.
+
+Since we learn from errors, let's have a look at some of them:
+
+- I did screw up the [links in the root fs](https://ostreedev.github.io/ostree/adapting-existing/#system-layout)
+  - Somehow creating a cyclic link from `/sysroot/ostree` pointing to `/sysroot/ostree`
+- I had wrong parameters in the ostree deploy command leading to invalid BLS entries
+
+I have to admit that creating a bootable OSTree system is harder than I anticipated, and both the documentation and the existing build scripts were hard to understand for me at times.
+I did open an [issue in the ostree repo](https://github.com/ostreedev/ostree/issues/2964) about the documentation, let's see if I can contribute something to that after my own understanding has improved.
+
+It feels like I'm close to reaching the first milestone, a minimal bootable Garden Linux system based on OSTree, but I'm not there yet.
+
+I'll keep you updated on my progress in this blog post series.
+
+If you're interested in the topic, feel free to comment this blog post or reach out to me on [LinkedIn](https://www.linkedin.com/in/fwilhe/).
