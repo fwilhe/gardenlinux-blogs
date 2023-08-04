@@ -144,4 +144,10 @@ It feels like I'm close to reaching the first milestone, a minimal bootable Gard
 
 I'll keep you updated on my progress in this blog post series.
 
-If you're interested in the topic, feel free to comment this blog post or reach out to me on [LinkedIn](https://www.linkedin.com/in/fwilhe/).
+## Pick of the month
+
+I've came across [this blog post by Colin Walters](https://blog.verbum.org/2020/08/22/immutable-→-reprovisionable-anti-hysteresis/), the maintainer of OSTree.
+The article is a bit long, but I think it is the most comprehensive explanation of the benefits of immutable image-based systems I've read so far.
+I highly recommend reading it.
+
+> If you're interested in the topic, feel free to comment this blog post or reach out to me on [LinkedIn](https://www.linkedin.com/in/fwilhe/).
