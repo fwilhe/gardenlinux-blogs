@@ -1,6 +1,5 @@
----
-title: 'Onboarding to the Garden Linux team, getting hands dirty with OSTree'
----
+<!-- 
+title: 'Onboarding to the Garden Linux team, getting hands dirty with OSTree' -->
 
 The first few weeks of my fellowship in the Garden Linux have already passed, and as promised I'd like to reflect on and share my experiences with you.
 
@@ -37,7 +36,7 @@ There are a few scripts on GitHub for building OSTree-based Debian systems, but 
 
 But even if this was successful, it would not have fully solved my problem as Garden Linux does have a few differences to a 'standard' Debian install.
 
-The key differences between Garden Linux and a 'standard' Debian install are:
+The key differences between [Garden Linux](http://gardenlinux.io) and a 'standard' Debian install are:
 
 - Garden Linux uses [systemd-boot](https://www.freedesktop.org/software/systemd/man/systemd-boot.html) instead of GRUB as the bootloader
 - Garden Linux uses [dracut](https://github.com/dracutdevs/dracut/wiki) instead of [initramfs-tools](https://wiki.debian.org/initramfs-tools) for the initramfs
@@ -139,6 +138,10 @@ Since we learn from errors, let's have a look at some of them:
 
 I have to admit that creating a bootable OSTree system is harder than I anticipated, and both the documentation and the existing build scripts were hard to understand for me at times.
 I did open an [issue in the ostree repo](https://github.com/ostreedev/ostree/issues/2964) about the documentation, let's see if I can contribute something to that after my own understanding has improved.
+
+This is what currently happens when I try to boot my Garden Linux OSTree system, and I don't know yet how to fix this:
+
+![](./02-k-ostree-gl-boot-failed.png "Gardenlinux failes to boot with OSTree")
 
 It feels like I'm close to reaching the first milestone, a minimal bootable Garden Linux system based on OSTree, but I'm not there yet.
 

@@ -1,6 +1,4 @@
----
-title: 'This is my title'
----
+<!-- Title: This is my Title -->
 
 > This post is part of a blog post series on my Garden Linux fellowship. \
 > See the [introductory post for context](https://blogs.sap.com/2023/07/10/making-an-immutable-image-based-operating-system-out-of-garden-linux/). \
@@ -15,4 +13,8 @@ Lorem ipsum
 Lorem ipsum
 
 
-If you're interested in the topic, feel free to comment this blog post or reach out to me on [LinkedIn](https://www.linkedin.com/in/fwilhe/).
+## Pick of the month
+
+Lorem ipsum
+
+> If you're interested in the topic, feel free to comment this blog post or reach out to me on [LinkedIn](https://www.linkedin.com/in/fwilhe/).
