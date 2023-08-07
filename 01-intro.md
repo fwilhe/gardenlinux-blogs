@@ -1,6 +1,4 @@
----
-title: 'Making an immutable image-based operating system out of Garden Linux'
----
+<!-- Title: Making an immutable image-based operating system out of Garden Linux -->
 
 > This post is part of a blog post series on my Garden Linux fellowship. \
 > The next entry in the series is [todo](todo).
