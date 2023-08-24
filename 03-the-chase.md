@@ -58,7 +58,7 @@ OSTree has a 'prepare root' service, which is the one we discussed before.
 This does a bunch of mounts and prepares the system so that systemd can do its own switch root.
 And now we're failing in the systemd switch root.
 
-![](./03-d-boot-process.png "My Alt Text")
+![](./03-d-boot-process.png "Flowchart of a subset of the boot process, showing how ostree-prepare-root.service and initrd-switch-root.service interact")
 
 I've discovered that in my CentOS OSTree system, the same service is running, but the `systemctl switch-root` command does get another argument: `/sysroot`.
 This seems to be required, but does not yet fix our problem.
@@ -100,6 +100,10 @@ After those tweaks, we do get a system that boots just fine.
 The mounts look good to me, and systemctl does report the system as `running`.
 
 Hooray, the first big milestone is reached.
+
+Adding podman to the image allows us to run software in containers.
+As 'installing' software in the traditional sense is not possible in image-based systems, having a container runtime is vital.
+Adding podman turns out to be trivial using the Garden Linux builder.
 
 # OSTree glossary
 
