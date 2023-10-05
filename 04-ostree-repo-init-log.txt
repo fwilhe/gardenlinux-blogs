@@ -1,0 +1,88 @@
+$ mkdir -p sysroot/ostree/repo
+$ ostree init --repo=sysroot/ostree/repo
+$ find .
+./sysroot
+./sysroot/ostree
+./sysroot/ostree/repo
+./sysroot/ostree/repo/tmp
+./sysroot/ostree/repo/tmp/cache
+./sysroot/ostree/repo/extensions
+./sysroot/ostree/repo/state
+./sysroot/ostree/repo/objects
+./sysroot/ostree/repo/refs
+./sysroot/ostree/repo/refs/remotes
+./sysroot/ostree/repo/refs/heads
+./sysroot/ostree/repo/refs/mirrors
+./sysroot/ostree/repo/config
+$ mkdir -p sysroot/ostree/deploy
+mkdir: created directory 'sysroot/ostree/deploy'
+
+$ ostree admin os-init --sysroot=./sysroot florians-linux
+ostree/deploy/florians-linux initialized as OSTree stateroot
+$ find .
+./sysroot
+./sysroot/ostree
+./sysroot/ostree/deploy
+./sysroot/ostree/deploy/florians-linux
+./sysroot/ostree/deploy/florians-linux/var
+./sysroot/ostree/deploy/florians-linux/var/tmp
+./sysroot/ostree/deploy/florians-linux/var/run
+./sysroot/ostree/deploy/florians-linux/var/lib
+./sysroot/ostree/deploy/florians-linux/var/lock
+./sysroot/ostree/deploy/florians-linux/var/log
+./sysroot/ostree/repo
+(... same as before)
+$ mkdir myrootfs
+mkdir: created directory 'myrootfs'
+$ echo 'hello world' > myrootfs/hello
+$ find myrootfs
+myrootfs
+myrootfs/hello
+
+$ ostree commit --repo=./sysroot/ostree/repo --branch main myrootfs
+5118126d07d78cb482e2eaf32595bf5539d47799043c9df0cb562ee51cd0c704
+$ find .
+./sysroot
+./sysroot/ostree
+./sysroot/ostree/deploy
+(... same as before)
+./sysroot/ostree/repo
+./sysroot/ostree/repo/tmp
+./sysroot/ostree/repo/tmp/cache
+./sysroot/ostree/repo/extensions
+./sysroot/ostree/repo/state
+./sysroot/ostree/repo/objects
+./sysroot/ostree/repo/objects/6f
+./sysroot/ostree/repo/objects/6f/2069d6d37f8c490d5f5fe2e753cdf756479987103633fc8b938824f3008c8b.file
+./sysroot/ostree/repo/objects/51
+./sysroot/ostree/repo/objects/51/18126d07d78cb482e2eaf32595bf5539d47799043c9df0cb562ee51cd0c704.commit
+./sysroot/ostree/repo/objects/79
+./sysroot/ostree/repo/objects/79/4f9b8b314d4d57193fca37dab9149b075b598dadb39d33f77d6a815fca584c.dirmeta
+./sysroot/ostree/repo/objects/dd
+./sysroot/ostree/repo/objects/dd/3365f444c0bfd86482c9d89c412abf503437fbca8e40103bee0da3119db252.dirtree
+(... same as before)
+
+$ ostree admin deploy --sysroot=./sysroot --os=florians-linux main
+$ find .
+./sysroot
+./sysroot/ostree
+./sysroot/ostree/deploy
+./sysroot/ostree/deploy/florians-linux/deploy/ddcc05c72b738e5f1731419628e77f93e4bfc8a6dceb564ef4f3c5cf52aa6a83.0/hello
+(... same as before)
+./sysroot/ostree/repo
+./sysroot/ostree/repo/tmp
+./sysroot/ostree/repo/tmp/cache
+./sysroot/ostree/repo/extensions
+./sysroot/ostree/repo/state
+./sysroot/ostree/repo/objects
+./sysroot/ostree/repo/objects/6f
+./sysroot/ostree/repo/objects/6f/2069d6d37f8c490d5f5fe2e753cdf756479987103633fc8b938824f3008c8b.file
+./sysroot/ostree/repo/objects/51
+./sysroot/ostree/repo/objects/51/18126d07d78cb482e2eaf32595bf5539d47799043c9df0cb562ee51cd0c704.commit
+./sysroot/ostree/repo/objects/79
+./sysroot/ostree/repo/objects/79/4f9b8b314d4d57193fca37dab9149b075b598dadb39d33f77d6a815fca584c.dirmeta
+./sysroot/ostree/repo/objects/dd
+./sysroot/ostree/repo/objects/dd/3365f444c0bfd86482c9d89c412abf503437fbca8e40103bee0da3119db252.dirtree
+(... same as before)
+./sysroot/ostree/boot.1.1/florians-linux/6439356532650863c9e1ad06e1df1a74712532a21ff4964be95d419f8e2a7b81
+./sysroot/ostree/boot.1.1/florians-linux/6439356532650863c9e1ad06e1df1a74712532a21ff4964be95d419f8e2a7b81/0
