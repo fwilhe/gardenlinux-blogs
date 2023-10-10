@@ -1,19 +1,26 @@
 <!-- Title: Upgrades are hard (not really) -->
 
 > This post is part of a blog post series on my Garden Linux fellowship. \
-> See the [introductory post for context](https://blogs.sap.com/2023/07/10/making-an-immutable-image-based-operating-system-out-of-garden-linux/). \
-> The next entry in the series is [todo](todo).
+> See the [introductory post for context](https://blogs.sap.com/2023/07/10/making-an-immutable-image-based-operating-system-out-of-garden-linux/).
 
-# Upgrade OSTree
+In this blog post series, I'm reflecting on my fellowship in the Garden Linux team.
+The project I've picked in my fellowship is to see how [OSTree](https://ostreedev.github.io/ostree/) can be used with [Garden Linux](https://gardenlinux.io/).
 
-After my last blog post [systemd and OSTree: The Chase is better than the Catch](https://blogs.sap.com/2023/08/25/systemd-and-ostree-the-chase-is-better-than-the-catch/), we have a booting OSTree Garden Linux system
+I have divided my fellowship project into three larger milestones:
 
-But booting OSTree-based systems is not that interesting, the exciting part is the upgrade.
+1. Get a booting system
+2. Implement upgrade
+3. Have some sort of 'package manager'
 
-And that should be easy now, right?
+Milestone one (booting system) was achieved in [part 2](https://blogs.sap.com/2023/08/07/onboarding-to-the-garden-linux-team-getting-hands-dirty-with-ostree/) and [part 3](https://blogs.sap.com/2023/08/25/systemd-and-ostree-the-chase-is-better-than-the-catch/) of this series.
+
+In this post, we'll investigate milestone two: How can we upgrade our OSTree-based Garden Linux systemd?
+Upgrades are [a key-feature of OSTree](https://ostreedev.github.io/ostree/atomic-upgrades/).
+
+Upgrading my system should be easy now, right?
 That's what I was thinking, not knowing what would come in the following weeks.
 
-Upgrading OSTree systems is similar to a `git pull`.
+Upgrading OSTree systems is conceptually similar to a `git pull`.
 Like in git, OSTree has the concepts of _commits_ and _remotes_.
 
 To create a remote, we need to save the commit we created in our pipeline and serve it via http.
@@ -39,19 +46,25 @@ OSTree has a variable called `loadstate` and it expected this to have the value 
 But why?
 What is `loadstate` even about?
 
+As a user of OSTree, I don't know about `loadstate`.
+It's not mentioned somewhere in the documentation.
+Thankfully, OSTree is an open source project so I can dig into the source code.
+
+What can we find out by searching the source code?
+
 [`loadstate`](https://github.com/ostreedev/ostree/blob/befd84436cab510efe5f09acbe96dea49eb0fdcb/src/libostree/ostree-sysroot-private.h#L71) is a variable in the `OstreeSysroot` object and has an enum type.
-Enum types are types that can have a few named values.
+Enum types (enumerations) are types that can have a few named values.
 In the case of `loadstate`, the values are `LOAD_STATE_NONE`, `LOAD_STATE_INIT` and `LOAD_STATE_LOADED`.
 
 We get an error because we're not in the `LOAD_STATE_LOADED` state.
 At what point would this be supposed to be happening?
 
-When searching for that in the code, we can see that this value is [only assigned in one place](https://github.com/ostreedev/ostree/blob/befd84436cab510efe5f09acbe96dea49eb0fdcb/src/libostree/ostree-sysroot.c#L1209) inside the function `sysroot_load_from_bootloader_configs`.
+When searching for that in the code, we can see that this value is [only assigned in one single place](https://github.com/ostreedev/ostree/blob/befd84436cab510efe5f09acbe96dea49eb0fdcb/src/libostree/ostree-sysroot.c#L1209) inside the function `sysroot_load_from_bootloader_configs`.
 
 But from where is this function called?
 I've created the following graph in trying to understand where this call could happen, but this did not help me immediately.
 
-![](./04-d-ostree-loadstate.png "alt text")
+![](./04-d-ostree-loadstate.png "Call graph of the sysroot_load_from_bootloader_configs function")
 
 As you can see there are quite a few ways how we can get to `sysroot_load_from_bootloader_configs`.
 At this point, I was stuck for quite some time.
@@ -60,14 +73,14 @@ I did open an [issue](https://github.com/ostreedev/ostree/issues/3022) in the OS
 I suspected various root causes for the issue, most notably the bootloader and the deployment.
 Why did those seem possible culprits?
 
-### The Bootloader
+## The Bootloader
 
 One of those suspected causes is the boot loader.
 Garden Linux uses systemd-boot which is not yet supported by OSTree.
 I had this suspicion because the function is called `..load_from_bootloader_configs`, so it might make sense that this is something that works with supported bootloaders, but does not work with unsupported bootloaders such as systemd-boot.
 I could not really find any evidence to support this suspicion.
 
-### The Deployment
+## The Deployment
 
 Another suspicion is that something was wrong with how I make the OSTree deployment.
 
@@ -104,7 +117,9 @@ This gives us some directories that very much look similar to an empty git repos
 We have `refs`, `remotes` and `objects`.
 
 Next we'll initialize the operating system.
-Our operating system needs a name, in this example I've called it `florians-linux`, this might be any linux distribution or your custom distribution.
+Our operating system needs a name, in this example I've called it `florians-linux`.
+In this case, this is just a name that is being used to identify the operating system.
+In theory it is possible to have multiple operating systems in one OSTree systems, but I've not yet seen such a system in practice.
 
 ```
 $ ostree admin os-init --sysroot=./sysroot florians-linux
@@ -137,7 +152,7 @@ $ cat myrootfs/hello
 hello world
 ```
 
-Given our root filesystem, we can create our commit on a branch (called `main` in this case, but that is not important):
+Given our root filesystem, we can create our _commit_ on a _branch_ (called `main` in this case, but that is not important):
 
 ```
 $ ostree commit --repo=./sysroot/ostree/repo --branch main myrootfs
@@ -187,14 +202,36 @@ $ find .
 ./sysroot/ostree/boot.1.1/florians-linux/bbb/0
 ```
 
-This will give us a copy of our root filesystem that can be booted into.
+The deployment is a copy of our root filesystem that can be booted into.
+Why do we need deployments?
+OSTree is built in a way that allows us to have "multiple copies" (commits) of our root file system locally.
+If we have an os upgrade, and the upgrade breaks our system for some reason, we can revert the upgrade by booting into a previous deployment/commit.
+The "multiple copies" I've mentioned are not really duplicated files.
+A common approach to allow rollbacks of operating systems is the A/B partition approach where the operating system has two root partitions, and upgrades will always be applied to the partition that's currently not booted.
+
+OSTree does follow a different, git-like approach.
+Consider this picture:
+
+![](./04-f-ostree-commits.png "Visual representation of OSTree commits")
+
+Here we see the simplified visual representation of two commits `A` and `B`.
+The hexadecimal number represents the sha hash of that file, showing us that some files are the same in both commits, some files have changed and some files are new in commit `B`.
+
+Deployment is the process that OSTree uses to turn those commits into bootable Linux filesystems.
+One deployment always corresponds to one commit.
+We can select a deployment at boot time, which allows us to select what OS version we want to boot.
+
+You can read more about OSTree [deployments here](https://ostreedev.github.io/ostree/deployment/).
 
 Back to our failing assertion:
 My suspicion was that the `write_deployments_finish` function that we've seen above should be called here and set the `loadstate` variable to `LOADED`.
 
+At this point, with the suspicions I described, I've been stuck for quite some time.
+I tried quite a few tools and methods to investigate the issue, but nothing seemed to help.
 
-I've tried various things, but I could not figure out what the issue was.
-I've chose to work on something else meanwhile and revisit the issue later.
+I was thinking about using a debugger to step through the code of the deployment to see what might go wrong, but as this code is running inside the Garden Linux Builder where I don't have an interactive terminal, this seemed hard or impossible to do.
+
+At some point, I've decided to do other things and see if we could resolve that issue later.
 
 # Those containers are made for booting
 
@@ -225,29 +262,22 @@ I've stopped looking at boot containers for now, but I find the concept very int
 
 # Plain debian vm
 
-Next to my work in the Garden Linux github repository, I've also created a playground at [fwilhe/ostree-debian-builder](https://github.com/fwilhe/ostree-debian-builder) which is based on the sample project for the [Garden Linux Builder](https://github.com/gardenlinux/builder#builder).
+Next to my work in the Garden Linux github repository, I've also created a playground repository on GitHub which is based on the sample project for the [Garden Linux Builder](https://github.com/gardenlinux/builder#builder).
 
 As opposed to the proper Garden Linux repo, this builds a 'plain' Debian vm, so it does not use the Garden Linux package sources.
 
-My plan for the `fwilhe/ostree-debian-builder` repository was to provide a simple example for how debian-based OSTree systems can be built, leaving out all the complications of the actual Garden Linux project.
+My plan for this repository was to provide a simple example for how debian-based OSTree systems can be built, leaving out all the complications of the actual Garden Linux project.
 
-This was functional for some time already, but I always had this strange issue where this VM could not get internet access.
-I've tried to debug the issue, reading up on the systemd tooling for network related things, and I was able to see that something was wrong with the VM's networking interface but I could not figure out how to fix this.
+As I had been looking for existing OSTree/Debian builder scripts before and found nothing that I could get working with a current version of Debian this might be interesting for a wider audience, I guess.
 
-The solution in the end was to extend the list of packages installed into this image.
-
-![](./04-f-debian-vm-networking.png "List of networking-related debian packages added to the image")
-
-I did not try to further investigate which exact package made it work in the end and what had been missing before, but I'm happy that this gave me a working setup.
-
-Feel free to checkout the [fwilhe/ostree-debian-builder](https://github.com/fwilhe/ostree-debian-builder) GitHub repo if you are curious.
-It does still take a few shortcuts, for example I've not yet tested building it on amd64 architecture, but it should give you a playground for getting up and running your own system.
+Feel free to check this repo out at [fwilhe/ostree-debian-builder](https://github.com/fwilhe/ostree-debian-builder) if you are curious.
+It is still very rough, but it should give you a playground for getting up and running your own system if you want to do that.
 
 # Resolving the assertion error
 
 You might think that using a debugger would be an appropriate tool to investigate why that assertion is going wrong.
 I have to admit that I don't have any experience with debugging c applications.
-I know that they can be compiled with debug symbols and that typically for production use uses this is not the case.
+I know that they can be compiled with debug symbols and that typically for production use this is not the case.
 This does not make it impossible but harder to debug.
 My experience with debugging is limited to languages like Java or Go, in an IDE.
 I know about GDB, but compiling a version of OSTree with debug symbols to step trough the code in GDB did sound like too much effort to me.
@@ -307,6 +337,7 @@ It tries to perform an upgrade, but it correctly finds that no upgrade is availa
 ![](./04-h-upgrade-no-new-commit.png "Trying to upgrade an OSTree-based system with no new commit available")
 
 In this screenshot, you can see that a newer commit exists on the remote repository: `8aa43` which OSTree correctly identifies.
+See the color coded arrows pointing at the different commit ids:
 
 ![](./04-i-upgrade-new-commit.png "Upgrading an OSTree-based system with a new commit available")
 
@@ -333,3 +364,5 @@ I also want to look into [systemd-sysext](https://www.freedesktop.org/software/s
 
 So, you see, I'm not done yet.
 Stay tuned for the next update in this series.
+
+> If you're interested in the topic, feel free to comment this blog post or reach out to me on [LinkedIn](https://www.linkedin.com/in/fwilhe/).
