@@ -304,7 +304,13 @@ When I create the same disk image twice, it will get different timestamps.
 That's why the Garden Linux build uses a constant timestamp for each version, so rebuilding the same version will produce the same image twice.
 
 What I had not been aware of is that I did not set the timestamp, so the Garden Linux builder used a timestamp value `0`, which is equivalent to January 1st, 1970.
+
+![](./04-h-timestamp-zero.png "Screenshot showing the directory /ostree/deploy has a modify time of zero")
+
 I did not think this could be an issue, but yes it is because that timestamp comparison that leads to the early return assumes your disk image has a non-`0` timestamp.
+
+![](./04-i-early-return.png "Annotated screenshot from the ostree_sysroot_load_if_changed function showing a condition that should not be true, but was true")
+Screenshot taken from [the `ostree_sysroot_load_if_changed` function](https://github.com/ostreedev/ostree/blob/67ccf6e0a1089a2a9546b267a600cbab59a4491c/src/libostree/ostree-sysroot.c#L1248).
 
 Wow.
 
@@ -334,16 +340,16 @@ It has multiple commits.
 In the lower section, you can see the vm that's booted from the most recent commit.
 It tries to perform an upgrade, but it correctly finds that no upgrade is available because `ddcc0` is the most recent commit.
 
-![](./04-h-upgrade-no-new-commit.png "Trying to upgrade an OSTree-based system with no new commit available")
+![](./04-k-upgrade-no-new-commit.png "Trying to upgrade an OSTree-based system with no new commit available")
 
 In this screenshot, you can see that a newer commit exists on the remote repository: `8aa43` which OSTree correctly identifies.
 See the color coded arrows pointing at the different commit ids:
 
-![](./04-i-upgrade-new-commit.png "Upgrading an OSTree-based system with a new commit available")
+![](./04-l-upgrade-new-commit.png "Upgrading an OSTree-based system with a new commit available")
 
 Manually updating our systemd-boot entries then allows us to boot the new commit.
 
-![](./04-j-bootloader.png "Bootloader screen showing two boot entries, each one will select a different commit to boot from")
+![](./04-m-bootloader.png "Bootloader screen showing two boot entries, each one will select a different commit to boot from")
 
 This is similar to what we've seen in the [first part of this series](https://blogs.sap.com/2023/07/10/making-an-immutable-image-based-operating-system-out-of-garden-linux/) with the Fedora Silverblue boot screen.
 
