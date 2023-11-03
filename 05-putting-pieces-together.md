@@ -84,7 +84,7 @@ The user might, if they want, change that remote url if they are hosting their o
 
 The `ostree admin upgrade` command will query the remote repository and identify newer commits.
 
-# Poor Man's Package Manager
+# Do we need a Package Manager?
 
 So now we have a system that we can _boot_ and _upgrade_.
 But that's still only the base operating system.
@@ -128,7 +128,7 @@ The OSTree docs describe how to implement such a system in theory in ["writing a
 
 This could be done using the APT package manager used by Debian, too.
 Implementing such a system seems out of scope for this proof of concept.
-There seems to be an [existing open source implementation of 'apt-ostree'](https://opendev.org/starlingx/apt-ostree), but I have not yet taken a closer look at it.
+There seems to be an [existing open source implementation of 'apt-ostree' at opendev.org/starlingx/apt-ostree](https://opendev.org/starlingx/apt-ostree), but I have not yet taken a closer look at it.
 
 ## Option 3: System extensions
 
@@ -186,7 +186,13 @@ But for the proof of concept, this seems to be good enough for now.
 
 # Summary and next steps
 
-todo
+I will continue to improve the prototype at [github.com/gardenlinux/ostree-image-builder](https://github.com/gardenlinux/ostree-image-builder). I have a few ideas for how the proof of concept can be improved.
+
+Overall I'm really happy with the current state of the proof of concept.
+As always there is so much that could be done, but reflecting on where I've started in summer I think the current situation is really good.
+
+Also I'll continue to look into [opendev.org/starlingx/apt-ostree](https://opendev.org/starlingx/apt-ostree) and system extensions.
+Both look interesting and they probably both work well in different scenarios, so I'd like to understand better how they work internally, in what aspects they are similar and in what aspects they are different implementation wise.
 
 
 > If you're interested in the topic, feel free to comment this blog post or reach out to me on [LinkedIn](https://www.linkedin.com/in/fwilhe/).
