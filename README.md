@@ -12,6 +12,8 @@ Draft repo for my blog post series about the Garden Linux fellowship.
 
 [Upgrades are hard (not really)](https://blogs.sap.com/2023/10/10/upgrades-are-hard-not-really/)
 
+[Putting the Pieces together](https://blogs.sap.com/2023/11/03/putting-the-pieces-together/)
+
 ## Posts on Github
 
 [01 Intro: Making an immutable image-based operating system out of Garden Linux](./01-intro.md)
@@ -21,3 +23,5 @@ Draft repo for my blog post series about the Garden Linux fellowship.
 [03 systemd and OSTree: The Chase is better than the Catch](./03-the-chase.md)
 
 [04 Upgrades are hard (not really)](./04-upgrades-are-hard.md)
+
+[05 Putting the Pieces together](./05-putting-pieces-together.md)
