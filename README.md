@@ -14,6 +14,8 @@ Draft repo for my blog post series about the Garden Linux fellowship.
 
 [Putting the Pieces together](https://blogs.sap.com/2023/11/03/putting-the-pieces-together/)
 
+[Retrospective](https://blogs.sap.com/2023/12/14/garden-linux-fellowship-retrospective/)
+
 ## Posts on Github
 
 [01 Intro: Making an immutable image-based operating system out of Garden Linux](./01-intro.md)
@@ -25,3 +27,5 @@ Draft repo for my blog post series about the Garden Linux fellowship.
 [04 Upgrades are hard (not really)](./04-upgrades-are-hard.md)
 
 [05 Putting the Pieces together](./05-putting-pieces-together.md)
+
+[06 Retrospective](./06-retrospective.md)
